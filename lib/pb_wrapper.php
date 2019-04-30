@@ -1,4 +1,28 @@
 <?php
+class PBTrackGetCode {
+	public $indentifiers;
+
+	public function __construct($order_id, $email){
+		$url = 'https://parceltracking.pb.com/orderapi/order-mgmt/services/unsecured/public/orders/'. $order_id .'/parcel-identifiers?emailId='.md5($email);
+		$cURL = curl_init();
+		curl_setopt($cURL, CURLOPT_URL, $url);
+		curl_setopt($cURL, CURLOPT_HTTPGET, true);
+		curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($cURL, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Accept: application/json'
+		));
+		$result = curl_exec($cURL);
+		curl_close($cURL);
+
+		$this->indentifiers = json_decode($result, true);
+	}
+
+	public function get_order_package_ids(){
+		return $this->identifiers['parcelIdentifiers'];
+	}
+}
+
 class PBTrack {
 
 	public $track_result;
